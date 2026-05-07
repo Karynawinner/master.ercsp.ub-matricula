@@ -2668,7 +2668,8 @@ async function sendToAirtable(itin, studentData, subjects) {
           'Itinerario':  studentData['Itinerario'] || '',
           'Especialidad': studentData['Especialidad'] || '',
         } })
-      ); if (!r2.ok) { const e2 = await r2.json(); console.error('Asignaturas error:', JSON.stringify(e2)); }
+      });
+      if (!r2.ok) { const e2 = await r2.json(); console.error('Asignaturas error:', JSON.stringify(e2)); }
     }
   } catch(e) { console.log('Airtable not configured:', e.message); }
 }
