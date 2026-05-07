@@ -2647,7 +2647,7 @@ function submitEconomistas() {
   if (!isInteresadoMode) sendToAirtable('economistas', {
     'Nombre':nombre, 'Primer apellido':ap1, 'Segundo apellido':ap2,
     'Email':email, 'Itinerario':'📊 Economistas', 'Especialidad':cfg.label,
-  }, [...autoItems, ...chosenItems]);
+  }, [...obligItems, ...autoItems, ...chosenItems]);
 }
 
 async function sendToAirtable(itin, studentData, subjects) {
@@ -2656,19 +2656,19 @@ async function sendToAirtable(itin, studentData, subjects) {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ table: 'Estudiantes', fields: studentData })
     });
-    if (!res.ok) return;
+    if (!res.ok) { const err = await res.json(); console.error('Estudiantes error:', JSON.stringify(err)); return; }
     const rec = await res.json();
     const studentId = rec.id;
     for (const subj of subjects) {
-      await fetch('/.netlify/functions/airtable', {
+      const r2 = await fetch('/.netlify/functions/airtable', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ table: 'Asignaturas', fields: {
-          'Asignatura':  subj.name, 'ECTS': subj.ects,
+          'Asignatura':  subj.name, 'ECTS': (typeof subj.ects === 'string' ? parseFloat(subj.ects.replace(',','.')) : subj.ects),
           'Tipo':        subj.tipo, 'Estudiantes': [studentId],
           'Itinerario':  studentData['Itinerario'] || '',
           'Especialidad': studentData['Especialidad'] || '',
         } })
-      });
+      ); if (!r2.ok) { const e2 = await r2.json(); console.error('Asignaturas error:', JSON.stringify(e2)); }
     }
   } catch(e) { console.log('Airtable not configured:', e.message); }
 }
