@@ -2647,7 +2647,7 @@ function submitEconomistas() {
   if (!isInteresadoMode) sendToAirtable('economistas', {
     'Nombre':nombre, 'Primer apellido':ap1, 'Segundo apellido':ap2,
     'Email':email, 'Itinerario':'📊 Economistas', 'Especialidad':cfg.label,
-  }, [...obligItems, ...autoItems, ...chosenItems]);
+  }, [...autoItems, ...chosenItems]);
 }
 
 async function sendToAirtable(itin, studentData, subjects) {
