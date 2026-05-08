@@ -2723,23 +2723,24 @@ function popupSection(title, items, credits) {
 
 // ── Send interesado data to Airtable ─────────────────────────────────
 async function sendInteresadoData() {
-  // Collect student data from popup
-  const nombre   = document.getElementById('popup-name').textContent.trim();
-  const email    = document.getElementById('popup-email').textContent.trim();
-
-  // Get from active form fields
+  // Get from active form fields directly
   const prefixMap = { juristas:'jur', economistas:'eco', ingenieros:'ing',
                       'bil-economistas':'bil-eco', 'bil-ingenieros':'bil-ing' };
-  let ap1 = '', ap2 = '', itinLabel = '', especialidad = '';
+  let nombre = '', email = '', ap1 = '', ap2 = '', itinLabel = '', especialidad = '';
   const activeForm = document.querySelector('.form-wrapper.active');
   if (activeForm) {
     const id = activeForm.id.replace('form-','');
     const px = prefixMap[id] || id;
-    ap1 = (document.getElementById(px+'-ap1') || {value:''}).value.trim();
-    ap2 = (document.getElementById(px+'-ap2') || {value:''}).value.trim();
+    nombre = (document.getElementById(px+'-nombre') || {value:''}).value.trim();
+    ap1    = (document.getElementById(px+'-ap1')    || {value:''}).value.trim();
+    ap2    = (document.getElementById(px+'-ap2')    || {value:''}).value.trim();
+    email  = (document.getElementById(px+'-email')  || {value:''}).value.trim();
     const itinEl = activeForm.querySelector('.itin-name');
     itinLabel = itinEl ? itinEl.textContent.replace(/[⚖️📊🏛️]/g,'').trim() : '';
   }
+  // Fallback to popup if form fields empty
+  if (!nombre) nombre = document.getElementById('popup-name').textContent.trim();
+  if (!email)  email  = document.getElementById('popup-email').textContent.trim();
 
   // Collect optativas elegidas from popup
   const optSections = [...document.querySelectorAll('#popup-sections .popup-section')];
