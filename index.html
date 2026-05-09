@@ -569,7 +569,7 @@ body {
       </div>
       <div class="itin-card" id="card-ingenieros" onclick="selectItin('ingenieros')">
         <div class="icon">🏛️</div>
-        <div class="label">Ingenieros y Politólogos</div>
+        <div class="label">Ingenieros/as y Politólogos/as</div>
         <div style="font-size:0.65rem;color:#888;margin-top:5px;letter-spacing:0.05em;font-style:italic;">Ingeniería Comercial y otros grados de ciencias sociales</div>
       </div>
     </div>
@@ -816,7 +816,7 @@ body {
     <!-- FORM: INGENIEROS -->
     <div class="form-wrapper" id="form-ingenieros">
       <div class="form-header">
-        <span class="itin-name">🏛️ Itinerario Ingenieros y Politólogos</span>
+        <span class="itin-name">🏛️ Itinerario Ingenieros/as y Politólogos/as</span>
         <button class="btn-change" onclick="changeItin()">← Cambiar itinerario</button>
       </div>
       <div class="form-body">
@@ -933,7 +933,7 @@ body {
       </div>
       <div class="itin-card" id="bil-card-ingenieros" onclick="selectBilItin('bil-ingenieros')">
         <div class="icon">🏛️</div>
-        <div class="label">Ingenieros y Politólogos</div>
+        <div class="label">Ingenieros/as y Politólogos/as</div>
         <div style="font-size:0.65rem;color:#888;margin-top:5px;letter-spacing:0.05em;font-style:italic;">Ingeniería Comercial y otros grados de ciencias sociales</div>
       </div>
     </div>
@@ -1046,7 +1046,7 @@ body {
 
     <div class="form-wrapper" id="form-bil-ingenieros">
       <div class="form-header">
-        <span class="itin-name">🏛️ Ingenieros y Politólogos — Opción bilingüe</span>
+        <span class="itin-name">🏛️ Ingenieros/as y Politólogos/as — Opción bilingüe</span>
         <button class="btn-change" onclick="changeBilItin()">← Cambiar itinerario</button>
       </div>
       <div class="form-body">
@@ -1394,6 +1394,7 @@ function ecoSelectEsp(esp) {
 
   // Choose section
   const chooseSection = document.getElementById('eco-choose-section');
+  document.getElementById('eco-opt-list').innerHTML = '';
   if (cfg.chooseCount > 0) {
     chooseSection.style.display = 'block';
     document.getElementById('eco-choose-label').textContent =
@@ -2399,7 +2400,7 @@ function submitIngenieros() {
 
   if (!isInteresadoMode) sendToAirtable('ingenieros', {
     'Nombre':nombre, 'Primer apellido':ap1, 'Segundo apellido':ap2,
-    'Email':email, 'Itinerario':'🏛️ Ingenieros y Politólogos', 'Especialidad':cfg.label,
+    'Email':email, 'Itinerario':'🏛️ Ingenieros/as y Politólogos/as', 'Especialidad':cfg.label,
   }, [...oblSelected, ...autoItems, ...freeChecked]);
 }
 
