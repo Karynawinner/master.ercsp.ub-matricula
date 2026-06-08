@@ -1193,6 +1193,7 @@ body {
                 text-transform:uppercase; text-align:center; cursor:pointer;
                 transition:background 0.2s; box-shadow:0 3px 12px rgba(45,122,45,0.3);">
         📩 Quiero recibir información detallada sobre el programa de máster en mi correo electrónico
+        <span style="display:block; margin-top:8px; font-size:0.68rem; font-weight:400; text-transform:none; letter-spacing:0.01em; line-height:1.4; opacity:0.9;">La información de contacto de carácter personal que nos facilite está protegida por el Reglamento Europeo de Protección de Datos, solo se utilizará para informarle sobre el Máster, y tiene derecho en todo momento a solicitar la eliminación de sus datos de nuestros registros.</span>
       </button>
     </div>
 
@@ -1777,7 +1778,7 @@ function submitBilEco() {
     const s = document.createElement('div');
     s.className = 'popup-section';
     s.innerHTML = `<div class="popup-section-title" style="display:flex;justify-content:space-between;align-items:center;">${title} <span style="background:#0059a2;color:white;font-size:0.68rem;padding:2px 10px;border-radius:12px;font-weight:700;">${cr} ECTS</span></div>` +
-      items.map(i => popupItem(i.name, i.ects)).join('');
+      renderSectionWithModules(items);
     sectionsEl.appendChild(s);
   });
 
@@ -2091,7 +2092,7 @@ function submitBilIng() {
     const s = document.createElement('div');
     s.className = 'popup-section';
     s.innerHTML = `<div class="popup-section-title" style="display:flex;justify-content:space-between;align-items:center;">${title} <span style="background:#0059a2;color:white;font-size:0.68rem;padding:2px 10px;border-radius:12px;font-weight:700;">${cr} ECTS</span></div>`+
-      items.map(i=>popupItem(i.name, i.ects)).join('');
+      renderSectionWithModules(items);
     sectionsEl.appendChild(s);
   });
 
@@ -2158,8 +2159,6 @@ const ING_FREE = [
   { id:'il3', name:'Economía y Regulación de los Servicios de Agua',                                                      ects:5   , lang:'Español' },
   { id:'il4', name:'Economía y Regulación de las Infraestructuras y los Transportes',                                               ects:5   , lang:'Español' },
   { id:'il5', name:'Derecho de la Regulación Económica',                                  ects:5   , lang:'Español' },
-  { id:'il6', name:'Análisis de Datos',                                         ects:2.5 , lang:'Español' },
-  { id:'il7', name:'Economía de la Competencia',                                ects:2.5 , lang:'Español' },
   { id:'il8', name:'Evaluación de Políticas y Proyectos',                       ects:5   , lang:'Español' },
   { id:'il9', name:'Privatización, Contratación Externa de Servicios y PPPs',   ects:5   , lang:'Español' },
 ];
@@ -2270,8 +2269,8 @@ function ingSelectEsp(esp) {
 
     document.getElementById('ing-choose-label').textContent =
       ingEsp === 'sin'
-        ? 'Escoge ' + cfg.chooseCredits + ' créditos (3 o 4 asignaturas):'
-        : 'Escoge ' + cfg.chooseCredits + ' créditos (1 o 2 asignaturas):';
+        ? 'Escoge ' + cfg.chooseCredits + ' créditos (3 asignaturas):'
+        : 'Escoge ' + cfg.chooseCredits + ' créditos (1 asignatura):';
     document.getElementById('ing-choose-counter').textContent = '0 / ' + cfg.chooseCredits + ' ECTS';
 
     const list = document.getElementById('ing-opt-list');
@@ -2381,7 +2380,7 @@ function submitIngenieros() {
     const s = document.createElement('div');
     s.className = 'popup-section';
     s.innerHTML = `<div class="popup-section-title" style="display:flex;justify-content:space-between;align-items:center;">${title} <span style="background:#0059a2;color:white;font-size:0.68rem;padding:2px 10px;border-radius:12px;font-weight:700;">${cr} ECTS</span></div>` +
-      items.map(i => popupItem(i.name, i.ects)).join('');
+      renderSectionWithModules(items);
     sectionsEl.appendChild(s);
   });
 
@@ -2442,7 +2441,7 @@ function showInteresadoPopup(nombre, ap1, ap2, email, itinLabel, sections, total
     const s = document.createElement('div');
     s.className = 'popup-section';
     s.innerHTML = `<div class="popup-section-title" style="display:flex;justify-content:space-between;align-items:center;">${title} <span style="background:#0059a2;color:white;font-size:0.68rem;padding:2px 10px;border-radius:12px;font-weight:700;">${cr} ECTS</span></div>` +
-      items.map(i => popupItem(i.name, i.ects)).join('');
+      renderSectionWithModules(items);
     sectionsEl.appendChild(s);
   });
   document.getElementById('popup-total-credits').textContent = totalCredits + ' ECTS';
@@ -2529,7 +2528,7 @@ function submitJuristas() {
     sec.innerHTML = '<div class="popup-section-title" style="display:flex;justify-content:space-between;align-items:center;">' +
       group.title.replace(/\s*\([\d.,\s]+ECTS\)/, '') +
       ' <span style="background:#0059a2;color:white;font-size:0.68rem;padding:2px 10px;border-radius:12px;font-weight:700;">' + groupCredits + ' ECTS</span></div>' +
-      group.items.map(i => popupItem(i.name, i.ects)).join('');
+      renderSectionWithModules(group.items);
     sectionsEl.appendChild(sec);
   });
 
@@ -2540,7 +2539,7 @@ function submitJuristas() {
     const sec2 = document.createElement('div');
     sec2.className = 'popup-section';
     sec2.innerHTML = '<div class="popup-section-title" style="display:flex;justify-content:space-between;align-items:center;">Asignaturas optativas elegidas <span style="background:#0059a2;color:white;font-size:0.68rem;padding:2px 10px;border-radius:12px;font-weight:700;">' + optCredits + ' ECTS</span></div>' +
-      optAll.map(i => popupItem(i.name, i.ects)).join('');
+      renderSectionWithModules(optAll);
     sectionsEl.appendChild(sec2);
   }
 
@@ -2618,7 +2617,7 @@ function submitEconomistas() {
     sec.innerHTML = '<div class="popup-section-title" style="display:flex;justify-content:space-between;align-items:center;">' +
       group.title.replace(/\s*\([\d.,\s]+ECTS\)/, '') +
       ' <span style="background:#0059a2;color:white;font-size:0.68rem;padding:2px 10px;border-radius:12px;font-weight:700;">' + groupCredits + ' ECTS</span></div>' +
-      group.items.map(i => popupItem(i.name, i.ects)).join('');
+      renderSectionWithModules(group.items);
     sectionsEl.appendChild(sec);
   });
 
@@ -2628,7 +2627,7 @@ function submitEconomistas() {
     const sec2 = document.createElement('div');
     sec2.className = 'popup-section';
     sec2.innerHTML = '<div class="popup-section-title" style="display:flex;justify-content:space-between;align-items:center;">Asignaturas optativas elegidas <span style="background:#0059a2;color:white;font-size:0.68rem;padding:2px 10px;border-radius:12px;font-weight:700;">' + optCredits + ' ECTS</span></div>' +
-      optItems.map(i => popupItem(i.name, i.ects)).join('');
+      renderSectionWithModules(optItems);
     sectionsEl.appendChild(sec2);
   }
 
@@ -2701,6 +2700,81 @@ function getCode(name) {
 }
 
 // Build popup item HTML with code
+
+// ── MDD Module dictionary ─────────────────────────────────────────────
+const MDD_MODULES = [
+  { name: 'MDD Servicios Públicos y Regulación',
+    subjects: ['Economía de la Regulación', 'Economía de los Servicios Públicos'] },
+  { name: 'MDD Liberalización y Reformas de Servicios Públicos',
+    subjects: ['Derecho Europeo de los Servicios Públicos', 'Reformas y Políticas de Servicios Públicos',
+               'Derecho Europeo de los Servicios Públicos (Español)', 'Reformas y Políticas de Servicios Públicos (Español)'] },
+  { name: 'MDD Análisis Sectorial: Servicios de Red (Energía y Telecomunicaciones)',
+    subjects: ['Economía y Regulación de la Energía y del Medioambiente',
+               'Economía y Regulación de la Energía y del Medioambiente (Español)',
+               'Economía y Regulación de las Telecomunicaciones',
+               'Economía y Regulación de las Telecomunicaciones (Español)'] },
+  { name: 'MDD Análisis Sectorial: Servicios Territoriales (Agua y Transportes)',
+    subjects: ['Economía y Regulación de las Infraestructuras y los Transportes',
+               'Economía y Regulación de las Infraestructuras y los Transportes (Español)',
+               'Economía y Regulación de los Servicios de Agua',
+               'Economía y Regulación de los Servicios de Agua (Español)'] },
+  { name: 'MDD Análisis de Datos',
+    subjects: ['Análisis de Datos', 'Análisis de Datos (Español)',
+               'Evaluación de Políticas y Proyectos',
+               'Análisis y Evaluación de Políticas Públicas',
+               'Public Policy Analysis & Evaluation',
+               'Organización Industrial Empírica',
+               'Empirical Industrial Organization',
+               'Economía de las Infraestructuras y del Transporte',
+               'Economics of Infrastructure & Transportation'] },
+  { name: 'MDD Competencia y Regulación Aplicadas',
+    subjects: ['Economía de la Competencia', 'Economía de la Competencia (Español)',
+               'Derecho de la Regulación Económica',
+               'Privatización, Contratación Externa de Servicios y PPPs',
+               'Privatización, Contratación Externa de Servicios y PPPs (Español)',
+               'Gobiernos y Mercados',
+               'Governments & Markets'] },
+  { name: 'MDD Mercados y Competencia',
+    subjects: ['Política de Competencia',
+               'Técnicas Cuantitativas para la Regulación y la Competencia'] },
+  { name: 'MDD Trabajo Final de Máster',
+    subjects: ['Trabajo Final de Máster'] },
+];
+
+function getMDD(name) {
+  // Match by exact name or partial (strip lang suffix)
+  const clean = name.replace(/\s*\(Español\)$/, '').replace(/\s*\(English\)$/, '').trim();
+  for (const m of MDD_MODULES) {
+    if (m.subjects.some(s => s === name || s === clean ||
+        name.startsWith(s) || s.startsWith(clean))) return m.name;
+  }
+  return null;
+}
+
+function renderSectionWithModules(items) {
+  // Group items by MDD module, preserving order
+  const groups = [];
+  const seen = new Map(); // mddName -> index in groups
+  for (const item of items) {
+    const mdd = getMDD(item.name);
+    const key = mdd || '__none__';
+    if (!seen.has(key)) {
+      seen.set(key, groups.length);
+      groups.push({ mdd, items: [] });
+    }
+    groups[seen.get(key)].items.push(item);
+  }
+  let html = '';
+  for (const g of groups) {
+    if (g.mdd) {
+      const mddCredits = g.items.reduce((s,i) => s + i.ects, 0);
+      html += `<div style="color:#0059a2;font-size:0.82rem;font-weight:400;text-align:left;padding:6px 0 2px 0;margin-top:4px;display:flex;justify-content:space-between;align-items:center;"><span>${g.mdd}</span><span style="font-size:0.75rem;opacity:0.85;">${mddCredits} ECTS</span></div>`;
+    }
+    html += g.items.map(i => popupItem(i.name, i.ects)).join('');
+  }
+  return html;
+}
+
 function popupItem(name, ects) {
   const code = getCode(name);
   return `<div class="popup-item"><span class="pcode">${code}</span><span>${name}</span><span class="pcredits">${ects} ECTS</span></div>`;
@@ -2712,7 +2786,7 @@ function popupSection(title, items, credits) {
   const header = title === '_first_' ? '' : '';
   return `<div class="popup-section">
     <div class="popup-section-title" style="display:flex;justify-content:space-between;align-items:center;">${title} <span style="background:#0059a2;color:white;font-size:0.68rem;padding:2px 10px;border-radius:12px;font-weight:700;">${credits} ECTS</span></div>
-    ${items.map(i => popupItem(i.name, i.ects)).join('')}
+    ${renderSectionWithModules(items)}
   </div>`;
 }
 // Preload banners
@@ -2987,7 +3061,7 @@ function openInteresadoPopup(itinKey) {
     const s  = document.createElement('div');
     s.className = 'popup-section';
     s.innerHTML = `<div class="popup-section-title" style="display:flex;justify-content:space-between;align-items:center;">Asignaturas obligatorias <span style="background:#0059a2;color:white;font-size:0.68rem;padding:2px 10px;border-radius:12px;font-weight:700;">${cr} ECTS</span></div>` +
-      obligItems.map(i=>popupItem(i.name, i.ects)).join('');
+      renderSectionWithModules(obligItems);
     sectionsEl.appendChild(s);
   }
 
@@ -2997,7 +3071,7 @@ function openInteresadoPopup(itinKey) {
     const s  = document.createElement('div');
     s.className = 'popup-section';
     s.innerHTML = `<div class="popup-section-title" style="display:flex;justify-content:space-between;align-items:center;">Asignaturas optativas seleccionadas <span style="background:#0059a2;color:white;font-size:0.68rem;padding:2px 10px;border-radius:12px;font-weight:700;">${cr} ECTS</span></div>` +
-      allOpt.map(i=>popupItem(i.name, i.ects)).join('');
+      renderSectionWithModules(allOpt);
     sectionsEl.appendChild(s);
   }
 
