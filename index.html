@@ -3114,25 +3114,47 @@ function generatePDF() {
                  document.querySelector('.form-wrapper.active .form-header span');
   const itinLabel = itinEl ? itinEl.textContent.replace(/[⚖️📊🏛️]/g,'').trim() : '';
 
-  // Collect all sections from popup
+  // Collect all sections from popup (including MDD modules)
   const sections = [];
   document.querySelectorAll('#popup-sections .popup-section').forEach(sec => {
     const titleEl = sec.querySelector('.popup-section-title');
     const title   = titleEl ? titleEl.childNodes[0].textContent.trim() : '';
     const credsBadge = titleEl ? titleEl.querySelector('span') : null;
     const creds   = credsBadge ? credsBadge.textContent.trim() : '';
-    const rows = [];
-    sec.querySelectorAll('.popup-item').forEach(item => {
-      const cells = item.querySelectorAll('span');
-      if (cells.length >= 3) {
-        rows.push({
-          code:    cells[0].textContent.trim(),
-          name:    cells[1].textContent.trim(),
-          ects:    cells[2].textContent.trim(),
-        });
+
+    // Collect rows grouped by MDD module
+    const modules = []; // [{mddName, mddCreds, rows:[]}]
+    let currentModule = null;
+
+    sec.querySelectorAll('div').forEach(el => {
+      // MDD header div (has display:flex and no popup-item class)
+      if (!el.classList.contains('popup-item') && el.style.color === 'rgb(0, 89, 162)' && el.children.length === 2) {
+        const mddName  = el.children[0].textContent.trim();
+        const mddCreds = el.children[1].textContent.trim();
+        currentModule = { mddName, mddCreds, rows: [] };
+        modules.push(currentModule);
+      } else if (el.classList.contains('popup-item')) {
+        const cells = el.querySelectorAll('span');
+        if (cells.length >= 3) {
+          const row = {
+            code: cells[0].textContent.trim(),
+            name: cells[1].textContent.trim(),
+            ects: cells[2].textContent.trim(),
+          };
+          if (currentModule) {
+            currentModule.rows.push(row);
+          } else {
+            // No MDD header — add to unnamed module
+            if (!modules.length || modules[modules.length-1].mddName) {
+              modules.push({ mddName: null, mddCreds: null, rows: [] });
+            }
+            modules[modules.length-1].rows.push(row);
+          }
+        }
       }
     });
-    if (rows.length) sections.push({ title, creds, rows });
+
+    if (modules.some(m => m.rows.length)) sections.push({ title, creds, modules });
   });
 
   const now = new Date();
@@ -3240,43 +3262,58 @@ function generatePDF() {
     y += 7;
     rowAlt = false;
 
-    sec.rows.forEach(row => {
-      if (y > H - (W * 211/1014) - 10) { doc.addPage(); y = 15; }
+    sec.modules.forEach(mod => {
+      // MDD module header
+      if (mod.mddName) {
+        if (y > H - (W * 211/1014) - 10) { doc.addPage(); y = 15; }
+        doc.setFont('helvetica','normal');
+        doc.setFontSize(7.5);
+        doc.setTextColor(...BLUE);
+        doc.text(mod.mddName, ML + 2.5, y + 4);
+        if (mod.mddCreds) {
+          doc.text(mod.mddCreds, ML + CW - 1, y + 4, { align:'right' });
+        }
+        y += 6;
+        rowAlt = false;
+      }
 
-      // Row background
-      doc.setFillColor(...(rowAlt ? LGRAY2 : WHITE));
-      const name  = row.name;
-      // Estimate row height
-      const lines = doc.splitTextToSize(name, NAME_W);
-      const rh    = Math.max(8, lines.length * 4.8 + 3);
+      mod.rows.forEach(row => {
+        if (y > H - (W * 211/1014) - 10) { doc.addPage(); y = 15; }
 
-      doc.rect(ML, y, CW, rh, 'F');
+        // Row background
+        doc.setFillColor(...(rowAlt ? LGRAY2 : WHITE));
+        const name  = row.name;
+        const lines = doc.splitTextToSize(name, NAME_W);
+        const rh    = Math.max(8, lines.length * 4.8 + 3);
 
-      // Bottom border
-      doc.setDrawColor(232, 238, 245);
-      doc.setLineWidth(0.2);
-      doc.line(ML, y + rh, ML + CW, y + rh);
+        doc.rect(ML, y, CW, rh, 'F');
 
-      // Code
-      doc.setFont('courier', 'normal');
-      doc.setFontSize(7.5);
-      doc.setTextColor(...GRAY);
-      doc.text(row.code, ML + 1, y + rh/2 + 1.5);
+        // Bottom border
+        doc.setDrawColor(232, 238, 245);
+        doc.setLineWidth(0.2);
+        doc.line(ML, y + rh, ML + CW, y + rh);
 
-      // Name
-      doc.setFont('helvetica','normal');
-      doc.setFontSize(8);
-      doc.setTextColor(30, 30, 30);
-      doc.text(lines, ML + CODE_W, y + (rh - lines.length * 4.2) / 2 + 4);
+        // Code
+        doc.setFont('courier', 'normal');
+        doc.setFontSize(7.5);
+        doc.setTextColor(...GRAY);
+        doc.text(row.code, ML + 1, y + rh/2 + 1.5);
 
-      // ECTS
-      doc.setFont('helvetica','bold');
-      doc.setFontSize(8);
-      doc.setTextColor(...BLUE);
-      doc.text(row.ects.replace(' ECTS',''), ML + CW - 1, y + rh/2 + 1.5, { align:'right' });
+        // Name
+        doc.setFont('helvetica','normal');
+        doc.setFontSize(8);
+        doc.setTextColor(30, 30, 30);
+        doc.text(lines, ML + CODE_W, y + (rh - lines.length * 4.2) / 2 + 4);
 
-      y += rh;
-      rowAlt = !rowAlt;
+        // ECTS
+        doc.setFont('helvetica','normal');
+        doc.setFontSize(7.5);
+        doc.setTextColor(30, 30, 30);
+        doc.text(row.ects.replace(' ECTS',''), ML + CW - 1, y + rh/2 + 1.5, { align:'right' });
+
+        y += rh;
+        rowAlt = !rowAlt;
+      });
     });
   });
 
