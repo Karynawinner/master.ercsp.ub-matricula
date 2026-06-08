@@ -2738,7 +2738,7 @@ const MDD_MODULES = [
     subjects: ['Política de Competencia',
                'Técnicas Cuantitativas para la Regulación y la Competencia'] },
   { name: 'MDD Trabajo Final de Máster',
-    subjects: ['Trabajo Final de Máster'] },
+    subjects: ['Trabajo Final de Máster', 'Trabajo Final Máster'] },
 ];
 
 function getMDD(name) {
@@ -2777,7 +2777,7 @@ function renderSectionWithModules(items) {
 
 function popupItem(name, ects) {
   const code = getCode(name);
-  return `<div class="popup-item"><span class="pcode">${code}</span><span>${name}</span><span class="pcredits">${ects} ECTS</span></div>`;
+  return `<div class="popup-item"><span class="pcode">${code}</span><span>${name}</span><span style="font-size:0.75rem;font-weight:400;color:#333;text-align:right;white-space:nowrap;margin-left:12px;">${ects} ECTS</span></div>`;
 }
 
 // Build popup section with table header
